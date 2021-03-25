@@ -8,18 +8,14 @@ namespace tuya {
 static const char *TAG = "tuya.fan";
 
 void TuyaFan::setup() {
-  auto traits = fan::FanTraits(this->oscillation_id_.has_value(), this->speed_id_.has_value(), false, 3);
+  auto traits = fan::FanTraits(this->oscillation_id_.has_value(), this->speed_id_.has_value(), false, (int)speed_count_id_.value());
   this->fan_->set_traits(traits);
 
   if (this->speed_id_.has_value()) {
     this->parent_->register_listener(*this->speed_id_, [this](TuyaDatapoint datapoint) {
       auto call = this->fan_->make_call();
-      if (datapoint.value_enum == 0x0)
-        call.set_speed(1);
-      else if (datapoint.value_enum == 0x1)
-        call.set_speed(2);
-      else if (datapoint.value_enum == 0x2)
-        call.set_speed(3);
+      if((int)datapoint.value_enum + 1 < (int)speed_count_id_.value())      
+            call.set_speed( 1 + (int)datapoint.value_enum);      
       else
         ESP_LOGCONFIG(TAG, "Speed has invalid value %d", datapoint.value_enum);
       ESP_LOGD(TAG, "MCU reported speed of: %d", datapoint.value_enum);
