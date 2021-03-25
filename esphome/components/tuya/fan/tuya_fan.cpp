@@ -8,14 +8,14 @@ namespace tuya {
 static const char *TAG = "tuya.fan";
 
 void TuyaFan::setup() {
-  auto traits = fan::FanTraits(this->oscillation_id_.has_value(), this->speed_id_.has_value(), false, (int)speed_count_id_.value());
+  auto traits = fan::FanTraits(this->oscillation_id_.has_value(), this->speed_id_.has_value(), false, speed_count_id_.value());
   this->fan_->set_traits(traits);
 
   if (this->speed_id_.has_value()) {
     this->parent_->register_listener(*this->speed_id_, [this](TuyaDatapoint datapoint) {
       auto call = this->fan_->make_call();
-      if((int)datapoint.value_enum + 1 < (int)speed_count_id_.value())      
-            call.set_speed( 1 + (int)datapoint.value_enum);      
+      if(datapoint.value_enum + 1 < speed_count_id_.value())      
+            call.set_speed( 1 + datapoint.value_enum);      
       else
         ESP_LOGCONFIG(TAG, "Speed has invalid value %d", datapoint.value_enum);
       ESP_LOGD(TAG, "MCU reported speed of: %d", datapoint.value_enum);
@@ -49,6 +49,8 @@ void TuyaFan::dump_config() {
     ESP_LOGCONFIG(TAG, "  Switch has datapoint ID %u", *this->switch_id_);
   if (this->oscillation_id_.has_value())
     ESP_LOGCONFIG(TAG, "  Oscillation has datapoint ID %u", *this->oscillation_id_);
+  if (this->speed_count_id_.has_value())
+    ESP_LOGCONFIG(TAG, "  Speed count is %u", *this->speed_count_id_);  
 }
 
 void TuyaFan::write_state() {
