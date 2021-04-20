@@ -9,7 +9,7 @@ from mock import MagicMock
 @pytest.fixture
 def default_config():
     return {
-        "name": "test-name",
+        "name": "test_name",
         "platform": "test_platform",
         "board": "test_board",
         "ssid": "test_ssid",
@@ -21,7 +21,7 @@ def default_config():
 @pytest.fixture
 def wizard_answers():
     return [
-        "test-node",  # Name of the node
+        "test_node",  # Name of the node
         "ESP8266",  # platform
         "nodemcuv2",  # board
         "SSID",  # ssid
@@ -305,14 +305,13 @@ def test_wizard_offers_better_node_name(tmpdir, monkeypatch, wizard_answers):
     """
     When the node name does not conform, a better alternative is offered
     * Removes special chars
-    * Replaces spaces with hyphens
-    * Replaces underscores with hyphens
+    * Replaces spaces with underscores
     * Converts all uppercase letters to lowercase
     """
 
     # Given
-    wizard_answers[0] = "Küche_Unten #2"
-    expected_name = "kuche-unten-2"
+    wizard_answers[0] = "Küche #2"
+    expected_name = "kuche_2"
     monkeypatch.setattr(
         wz, "default_input", MagicMock(side_effect=lambda _, default: default)
     )
