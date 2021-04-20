@@ -9,15 +9,13 @@ namespace tuya {
 
 class TuyaFan : public Component {
  public:
+  TuyaFan(Tuya *parent, fan::FanState *fan, int speed_count) : parent_(parent), fan_(fan), speed_count_(speed_count) {}
   void setup() override;
   void dump_config() override;
   void set_speed_id(uint8_t speed_id) { this->speed_id_ = speed_id; }
   void set_switch_id(uint8_t switch_id) { this->switch_id_ = switch_id; }
   void set_oscillation_id(uint8_t oscillation_id) { this->oscillation_id_ = oscillation_id; }
-  void set_fan(fan::FanState *fan) { this->fan_ = fan; }
-  void set_tuya_parent(Tuya *parent) { this->parent_ = parent; }
   void write_state();
-  void set_speed_count_id(uint32_t speed_count_id) { this->speed_count_id_ = speed_count_id; }
 
  protected:
   void update_speed_(uint32_t value);
@@ -28,8 +26,8 @@ class TuyaFan : public Component {
   optional<uint8_t> speed_id_{};
   optional<uint8_t> switch_id_{};
   optional<uint8_t> oscillation_id_{};
-  optional<uint32_t> speed_count_id_{};
-  fan::FanState *fan_; 
+  fan::FanState *fan_;
+  int speed_count_{};
 };
 
 }  // namespace tuya
